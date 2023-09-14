@@ -10,4 +10,6 @@ window.title('Nine Men\'s Morris')
 window.geometry("300x200+10+10")
 window.mainloop()
 
+print("hello world")
+
 
