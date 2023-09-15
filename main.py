@@ -1,3 +1,3 @@
-# This is the start of placing a piece code (Ashna)
+# This is the start of moving a piece code (Ashna)
 
 
