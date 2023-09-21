@@ -1,4 +1,4 @@
-# This is the start of placing a piece code (Ashna)
+# This is the start of flying a piece code (Ashna)
 def print_board(board):
     for row in board:
         print(' | '.join(row))
