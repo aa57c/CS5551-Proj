@@ -37,12 +37,16 @@ board = [
     [' ' for _ in range(7)] for _ in range(7)
 ]
 
+# setting up board with pieces on board already (this will not happen in real life, just for this story)
+board[4][4] = 'X'
+board[1][1] = 'O'
+
 print("OG Board")
 print_board(board)
 
 # Player 1's turn
 print("Player 1's turn")
-start = (3, 3)
+start = (4, 4)
 end = (3, 2)
 make_move(board, start, end, player1)
 print_board(board)
