@@ -1,31 +1,72 @@
 # This is the start of placing a piece code (Ashna)
 def print_board(board):
-    for row in board:
-        print(' | '.join(row))
-        print('-' * 21)
+    print(board[0] + "(00)----------------------" + board[1] +
+          "(01)----------------------" + board[2] + "(02)")
+    print("|                           |                           |")
+    print("|                           |                           |")
+    print("|                           |                           |")
+    print("|       " + board[8] + "(08)--------------" +
+          board[9] + "(09)--------------" + board[10] + "(10)     |")
+    print("|       |                   |                    |      |")
+    print("|       |                   |                    |      |")
+    print("|       |                   |                    |      |")
+    print("|       |        " + board[16] + "(16)-----" +
+          board[17] + "(17)-----" + board[18] + "(18)       |      |")
+    print("|       |         |                   |          |      |")
+    print("|       |         |                   |          |      |")
+    print("|       |         |                   |          |      |")
+    print(board[3] + "(03)---" + board[11] + "(11)----" + board[19] + "(19)               " +
+          board[20] + "(20)----" + board[12] + "(12)---" + board[4] + "(04)")
+    print("|       |         |                   |          |      |")
+    print("|       |         |                   |          |      |")
+    print("|       |         |                   |          |      |")
+    print("|       |        " + board[21] + "(21)-----" +
+          board[22] + "(22)-----" + board[23] + "(23)       |      |")
+    print("|       |                   |                    |      |")
+    print("|       |                   |                    |      |")
+    print("|       |                   |                    |      |")
+    print("|       " + board[13] + "(13)--------------" +
+          board[14] + "(14)--------------" + board[15] + "(15)     |")
+    print("|                           |                           |")
+    print("|                           |                           |")
+    print("|                           |                           |")
+    print(board[5] + "(05)----------------------" + board[6] +
+          "(06)----------------------" + board[7] + "(07)")
+    print("\n")
+
+
 
 def place_piece(board, player):
-    while True:
+   print_board(board)
+   while True:
         try:
-            position = input(f"Player {player}, enter the row and column (such as A1): ").strip().upper()
-            row, col = position[0], int(position[1]) - 1
-            if not('A' <= row <= 'G') or not (0 <= col <= 6) or board[ord(row) - ord('A')][col] != ' ':
+            position = int(input(f"Player {player}, enter a position (0-23) that has not been taken: "))
+            if(position > 23 or position < 0):
                 raise ValueError("Invalid position. Try again.")
-            board[ord(row) - ord('A')][col] = player
+            board[position] = player
             break
         except ValueError as e:
             print(e)
         except (IndexError, TypeError):
-            print("Invalid input format. Use the format 'A1'.")
+            print("Invalid input. Try again")
+    
 
-board = [[' ' for _ in range(7)] for _ in range(7)]
 
-player1 = 'X'
-player2 = 'O'
-players = [player1, player2]
+# Numbers for input will be the first index, Letters for input will be the second index
+board = []
+for i in range(24):
+    board.append('0')
 
-for _ in range(18):
-    current_player = players[_ % 2]
-    print_board(board)
-    place_piece(board, current_player)
+player1 = '1'
+player2 = '2'
+
+for x in range(18):
+    place_piece(board, player1)
+    place_piece(board, player2)
+
+
+
+
+
+
 
