@@ -79,12 +79,27 @@ class Game_Functions(Board):
         [16, 19, 21], [1, 9, 17], [20, 12, 4],
         [22, 14, 6], [3, 11, 19]
         ]
+        newly_formed_mills = []
+
         for combo in mill_combinations:
             if self.get_positions()[combo[0]] == self.get_positions()[combo[1]] == self.get_positions()[combo[2]] == self.get_player_turn():
                 if combo not in self.get_active_mills():
-                    self.get_active_mills().append(combo)
-                    return True
-        return False
+                    newly_formed_mills.append(combo)
+                    
+        if newly_formed_mills:
+            self.set_active_mills(self.get_active_mills() + newly_formed_mills)
+            self.remove_piece()
+
+    def check_remove_active_mill(self):
+        mills_to_remove = []
+
+        for mill in self.get_active_mills():
+            player_at_mill = self.get_positions()[mill[0]]
+            if not (self.get_positions()[mill[0]] == self.get_positions()[mill[1]] == self.get_positions()[mill[2]] == player_at_mill):
+                mills_to_remove.append(mill)
+
+        for mill in mills_to_remove:
+            self.get_active_mills().remove(mill)
 
 def main():
     game = Game_Functions()
