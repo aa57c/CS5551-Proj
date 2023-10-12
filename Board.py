@@ -49,6 +49,13 @@ class Board:
     def setPermissibleMoves(self, perm_moves):
         self.permissible_moves = perm_moves
     
+    def decrementTurns(self):
+        self.remaining_turns -= 1
+
+if __name__ == "__main__":
+    board = Board()
+    print(board.getBoardPositions())
+    
 
 
 

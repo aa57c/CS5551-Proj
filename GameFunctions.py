@@ -51,106 +51,107 @@ class Game_Functions(Board):
       def is_current_player(self, position):
           return self.getBoardPositions()[position] == self.getPlayerTurn()
       
-      def place_piece(self):
-          while True:
-            try:
-                position = int(input(f"Player {self.getPlayerTurn()}, enter a position (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
-                if position == 24:
-                    self.load()
-                elif position == 25:
-                    self.save()
-                elif position == 26:
-                    self.new_restart_game()
-                elif position == 27:
-                    self.replay()
-                elif position == 28:
-                    self.start_menu()
-                elif 0 <= position <= 23:
-                    if not self.is_occupied(position):
+      def place_piece(self, finished_turn=False):
+            while(True):
+                try:
+                    position = int(input(f"Player {self.getPlayerTurn()}, enter a position (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
+                    #This part will be replaced by buttons on the front end (GUI) side
+                    #for example, load is a button on the screen and it will call the load() method
+                    if position == 24:
+                        self.load()
+                    elif position == 25:
+                        self.save()
+                    elif position == 26:
+                        self.new_restart_game()
+                    elif position == 27:
+                        self.replay()
+                    elif position == 28:
+                        self.start_menu()
+                    elif 0 <= position <= 23 and not self.is_occupied(position):
                         self.getBoardPositions()[position] = self.getPlayerTurn()
                         self.printBoard() 
-                        return
+                    elif position < 0 or position > 28:
+                        print("Invalid position. Try again.")
                     else:
                         print("Position already occupied. Try again.")
-                else:
-                    print("Invalid position. Try again.")
-            except ValueError:
-                print("Invalid input. Try again.")
+                except ValueError:
+                    print("Invalid input. Try again.")
+            return finished_turn
       def move_piece(self):
-          while True:
-            try:
-                current_position = int(input(f"Player {self.getPlayerTurn()}, select a piece to move (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
-                if current_position == 24:
-                    self.load()
-                elif current_position == 25:
-                    self.save()
-                elif current_position == 26:
-                    self.new_restart_game()
-                elif current_position == 27:
-                    self.replay()
-                elif current_position == 28:
-                    self.start_menu()
-                elif self.is_occupied(current_position) and self.is_current_player(current_position):
-                    move_to = int(input(f"Select where to move your piece {self.getPermissibleMoves()[current_position]}: "))
-                    if move_to in self.getPermissibleMoves()[current_position] and not self.is_occupied(move_to):
-                        self.getBoardPositions()[move_to] = self.get_player_turn()
-                        self.getBoardPositions()[current_position] = 0
-                        self.printBoard() 
-                        return
+            while(True):
+                try:
+                    position = int(input(f"Player {self.getPlayerTurn()}, select a piece to move (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
+                    if position == 24:
+                        self.load()
+                    elif position == 25:
+                        self.save()
+                    elif position == 26:
+                        self.new_restart_game()
+                    elif position == 27:
+                        self.replay()
+                    elif position == 28:
+                        self.start_menu()
+                    elif self.is_occupied(position) and self.is_current_player(position):
+                        move_to = int(input(f"Select where to move your piece {self.getPermissibleMoves()[position]}: "))
+                        if move_to in self.getPermissibleMoves()[position] and not self.is_occupied(move_to):
+                            self.getBoardPositions()[move_to] = self.getPlayerTurn()
+                            self.getBoardPositions()[position] = 0
+                            self.printBoard() 
+                            break
+                        else:
+                            print("Invalid move. Try again.")
                     else:
-                        print("Invalid move. Try again.")
-                else:
-                    print("Invalid choice. Select one of your pieces.")
-            except (ValueError, KeyError):
-                print("Invalid input. Try again.")
+                        print("Invalid choice. Select one of your pieces.")
+                except (ValueError, KeyError):
+                    print("Invalid input. Try again.")
           
           
       def remove_piece(self):
-          while True:
-            try:
-                position = int(input(f"Player {self.getPlayerTurn()}, choose an opponent's piece to remove (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
-                if position == 24:
-                    self.load()
-                elif position == 25:
-                    self.save()
-                elif position == 26:
-                    self.new_restart_game()
-                elif position == 27:
-                    self.replay()
-                elif position == 28:
-                    self.start_menu()
-                elif 0 <= position <= 23 and self.is_occupied(position) and not self.is_current_player(position):
-                    self.getBoardPositions()[position] = 0
-                    self.printBoard() 
-                    print(f"Piece at position {position} removed.")
-                    return
-                else:
-                    print("Invalid choice. You must select an opponent's piece.")
-            except ValueError:
-                print("Invalid input. Try again.")
+            while(True):
+                try:
+                    position = int(input(f"Player {self.getPlayerTurn()}, choose an opponent's piece to remove (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
+                    if position == 24:
+                        self.load()
+                    elif position == 25:
+                        self.save()
+                    elif position == 26:
+                        self.new_restart_game()
+                    elif position == 27:
+                        self.replay()
+                    elif position == 28:
+                        self.start_menu()
+                    elif 0 <= position <= 23 and self.is_occupied(position) and not self.is_current_player(position):
+                        self.getBoardPositions()[position] = 0
+                        self.printBoard() 
+                        print(f"Piece at position {position} removed.")
+                        break
+                    else:
+                        print("Invalid choice. You must select an opponent's piece.")
+                except ValueError:
+                        print("Invalid input. Try again.")
 
         
       def fly_piece(self):
-            while True:
+            while(True):
                   try:
-                        current_position = int(input(f"Player {self.getPlayerTurn()}, select a piece to fly (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
-                        if current_position == 24:
+                        position = int(input(f"Player {self.getPlayerTurn()}, select a piece to fly (0-23), 24 to Load, 25 to Save, 26 to Restart, 27 to Replay or 28 to access main menu: "))
+                        if position == 24:
                               self.load()
-                        elif current_position == 25:
+                        elif position == 25:
                               self.save()
-                        elif current_position == 26:
+                        elif position == 26:
                               self.new_restart_game()
-                        elif current_position == 27:
+                        elif position == 27:
                               self.replay()
-                        elif current_position == 28:
+                        elif position == 28:
                               self.start_menu()
-                        elif self.is_occupied(current_position) and self.is_current_player(current_position):
+                        elif self.is_occupied(position) and self.is_current_player(position):
                               move_to = int(input("Select where to fly your piece (0-23): "))
                               if not self.is_occupied(move_to):
                                     self.getBoardPositions()[move_to] = self.getPlayerTurn()
-                                    self.getBoardPositions()[current_position] = 0
-                                    self.printBoard() 
-                                    return
+                                    self.getBoardPositions()[position] = 0
+                                    self.printBoard()
+                                    break
                               else:
                                     print("Position already occupied. Try again.")
                         else:
@@ -166,11 +167,15 @@ class Game_Functions(Board):
         [16, 19, 21], [1, 9, 17], [20, 12, 4],
         [22, 14, 6], [3, 11, 19]
         ]
+        newly_formed_mills = []
         for combo in mill_combinations:
             if self.getBoardPositions()[combo[0]] == self.getBoardPositions()[combo[1]] == self.getBoardPositions()[combo[2]] == self.getPlayerTurn():
                 if combo not in self.getActiveMills():
                     self.getActiveMills().append(combo)
                     return True
+        if newly_formed_mills:
+            self.setActiveMills(self.getActiveMills() + newly_formed_mills)
+            self.remove_piece()
         return False
       def check_remove_active_mill(self):
         for mill in self.getActiveMills():
@@ -246,21 +251,23 @@ class Game_Functions(Board):
         print("Remaining turns:", self.getRemainingTurns())
 
       def place_a_piece_phase(self):
-        for _ in range(self.getRemainingTurns()):
+        while(self.getRemainingTurns() != 0):
             self.place_piece()
             if self.form_mill():
                 self.remove_piece()
             self.check_remove_active_mill()
             self.setPlrTurn(2 if self.getPlayerTurn() == 1 else 1)
+            self.decrementTurns()
+
 
       def move_a_piece_phase(self):
         while not self.is_game_over():
             if self.player_piece_count() == 3:
-                self.fly_piece()
+                finished_turn = self.fly_piece()
             else:
-                self.move_piece()
+                finished_turn = self.move_piece()
             if self.form_mill():
-                self.remove_piece()
+                finished_turn = self.remove_piece()
             self.check_remove_active_mill()
             self.setPlrTurn(2 if self.getPlayerTurn() == 1 else 1)
 
@@ -272,8 +279,4 @@ class Game_Functions(Board):
         self.place_a_piece_phase()
         self.move_a_piece_phase()
         print(f"Player {self.getPlayerTurn()} wins!")
-
-def main():
-    game = Game_Functions()  # Create a Game_Functions object.
-    game.start_menu()  # Start the game with the main menu.
 
