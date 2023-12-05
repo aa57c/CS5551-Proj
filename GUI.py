@@ -226,138 +226,94 @@ def draw_board(screen, board_img, positions, coords, replay, play, game_mode_sel
     try:
         # Draw the background board
         screen.blit(board_img.convert(), (0, 0))
-        # Draw boarders around the clickable areas
+        
+        # Draw borders around the clickable areas if in debug mode
         if DEBUG:
-            if replay == False and play == False:
-                for rect in clickables:
-                    pygame.draw.rect(screen, BLACK, rect, 1)
-            if replay == True and play == False:
-                for rect in replay_clickables:
-                    pygame.draw.rect(screen, BLACK, rect, 1)
-            if replay == True and play == True:
-                for rect in play_clickables:
-                    pygame.draw.rect(screen, BLACK, rect, 1)
-            print("positions in draw_board: ", positions)
+            clickable_areas = clickables if not replay and not play else replay_clickables if replay and not play else play_clickables
+            for rect in clickable_areas:
+                pygame.draw.rect(screen, BLACK, rect, 1)
+        
         # Draw the pieces on the board
         for pos, value in enumerate(positions):
             x, y = coords[pos]
-            if value == 1:
-                screen.blit(pantherimg.convert_alpha(), (x, y))
-            elif value == 2:
-                screen.blit(dragonimg.convert_alpha(), (x, y))
-
-        #Highlight with green rectangle the selected piece
-        if startpos != None:
+            piece_img = pantherimg.convert_alpha() if value == 1 else dragonimg.convert_alpha() if value == 2 else None
+            if piece_img:
+                screen.blit(piece_img, (x, y))
+        
+        # Highlight the selected piece with a green rectangle
+        if startpos is not None:
             x, y = coords[startpos]
             pygame.draw.rect(screen, GREEN, (x, y, 30, 30), 3)
-        # draw the restart game button
-        restart_btn_coord = None
-        if(board.get_board_size() == 3):
-            restart_btn_coord = coords[12]
-        elif(board.get_board_size() == 6):
-            restart_btn_coord = coords[19]
-        elif(board.get_board_size() == 9):
-            restart_btn_coord = coords[27]
-        if replay == False:
-            screen.blit(restart_button.convert_alpha(), (restart_btn_coord))
-
-        # draw the selection buttons
-        if game_mode_selection == True:
-            screen.blit(single_player.convert_alpha(), (selection_coords[1]))
-            screen.blit(multi_player.convert_alpha(), (selection_coords[2]))
-
-
-
-        # Draw replay button
-        if replay == False and play == False:
-            replay_btn_coord = None
-            save_btn_coord = None
-            load_btn_coord = None
-            if(board.get_board_size() == 3):
-                replay_btn_coord = coords[9]
-                save_btn_coord = coords[10]
-                load_btn_coord = coords[11]
-            elif(board.get_board_size() == 6):
-                replay_btn_coord = coords[16]
-                save_btn_coord = coords[17]
-                load_btn_coord = coords[18]
-            elif(board.get_board_size() == 9):
-                replay_btn_coord = coords[24]
-                save_btn_coord = coords[25]
-                load_btn_coord = coords[26]
-            screen.blit(replay_button.convert_alpha(), (replay_btn_coord))
-            screen.blit(save_button.convert_alpha(), (save_btn_coord))
-            screen.blit(load_button.convert_alpha(), (load_btn_coord))
-        if replay == True and play == False:
-            screen.blit(rewind_button.convert_alpha(), (replay_coords[1]))
-            screen.blit(play_button.convert_alpha(), (replay_coords[2]))
-            screen.blit(fast_forward_button.convert_alpha(), (replay_coords[3]))
-            screen.blit(back_button.convert_alpha(), (replay_coords[4]))
-        if replay == True and play == True:
-            screen.blit(play_button.convert_alpha(), (play_coords[1]))
-            screen.blit(pause_button.convert_alpha(), (play_coords[2]))
-            screen.blit(back_button.convert_alpha(), (play_coords[3]))
+        
+        # Draw the restart game button
+        restart_btn_coord = coords[12] if board.get_board_size() == 3 else coords[19] if board.get_board_size() == 6 else coords[27] if board.get_board_size() == 9 else None
+        if not replay:
+            screen.blit(restart_button.convert_alpha(), restart_btn_coord)
+        
+        # Draw the selection buttons
+        if game_mode_selection:
+            screen.blit(single_player.convert_alpha(), selection_coords[1])
+            screen.blit(multi_player.convert_alpha(), selection_coords[2])
+        
+        # Draw replay buttons based on the game state
+        if not replay and not play:
+            replay_btn_coord = coords[9] if board.get_board_size() == 3 else coords[16] if board.get_board_size() == 6 else coords[24] if board.get_board_size() == 9 else None
+            save_btn_coord = coords[10] if board.get_board_size() == 3 else coords[17] if board.get_board_size() == 6 else coords[25] if board.get_board_size() == 9 else None
+            load_btn_coord = coords[11] if board.get_board_size() == 3 else coords[18] if board.get_board_size() == 6 else coords[26] if board.get_board_size() == 9 else None
+            screen.blit(replay_button.convert_alpha(), replay_btn_coord)
+            screen.blit(save_button.convert_alpha(), save_btn_coord)
+            screen.blit(load_button.convert_alpha(), load_btn_coord)
+        
+        # Draw replay buttons if in replay mode
+        if replay and not play:
+            screen.blit(rewind_button.convert_alpha(), replay_coords[1])
+            screen.blit(play_button.convert_alpha(), replay_coords[2])
+            screen.blit(fast_forward_button.convert_alpha(), replay_coords[3])
+            screen.blit(back_button.convert_alpha(), replay_coords[4])
+        
+        # Draw play buttons if in play mode
+        if replay and play:
+            screen.blit(play_button.convert_alpha(), play_coords[1])
+            screen.blit(pause_button.convert_alpha(), play_coords[2])
+            screen.blit(back_button.convert_alpha(), play_coords[3])
     except Exception as e:
         print(f"Error drawing the board: {e}")
 
-
-
 def draw_game_info(screen, game_functions, gameover, removepos, replay, game_mode_selection):
-
-    # Display the variables from the Board class
-    if gameover == True:
-        if(replay):
-            texts = [
-                f"In Replay Mode"
-            ]
+    texts = []
+    
+    if gameover:
+        if replay:
+            texts.append("In Replay Mode")
         else:
-            texts = [
-                f"Game Over! Player {2 if game_functions.get_player_turn() == 1 else 1} wins!",
-                f"Close window to change game settings or click Restart"
-            ]
-    if gameover == False and game_mode_selection == False:
-        if(game_functions.get_remaining_turns() != 0):
-            if(removepos):
-                texts = [
-                    f"Player {1 if game_functions.get_player_turn() == 1 else 2} formed a mill!",
-                    f"Select an opponent's piece to remove from the board."
-                ]
-            elif(replay):
-                texts = [
-                    f"In Replay Mode"
-                ]
+            texts.append(f"Game Over! Player {2 if game_functions.get_player_turn() == 1 else 1} wins!")
+            texts.append("Close window to change game settings or click Restart")
+    elif not game_mode_selection:
+        if game_functions.get_remaining_turns() != 0:
+            if removepos:
+                texts.append(f"Player {1 if game_functions.get_player_turn() == 1 else 2} formed a mill!")
+                texts.append("Select an opponent's piece to remove from the board.")
+            elif replay:
+                texts.append("In Replay Mode")
             else:
-                texts = [
-                    f"It's Player {1 if game_functions.get_player_turn() == 1 else 2}'s turn!",
-                    f"Remaining Turns: {game_functions.get_remaining_turns()}"
-                ]
-
-        elif(game_functions.get_remaining_turns() == 0):
-            if(removepos):
-                texts = [
-                    f"Player {1 if game_functions.get_player_turn() == 1 else 2} formed a mill!",
-                    f"Select an opponent's piece to remove from the board."
-                ]
-            elif(replay):
-                texts = [
-                    f"In Replay Mode"
-                ]
+                texts.append(f"It's Player {1 if game_functions.get_player_turn() == 1 else 2}'s turn!")
+                texts.append(f"Remaining Turns: {game_functions.get_remaining_turns()}")
+        elif game_functions.get_remaining_turns() == 0:
+            if removepos:
+                texts.append(f"Player {1 if game_functions.get_player_turn() == 1 else 2} formed a mill!")
+                texts.append("Select an opponent's piece to remove from the board.")
+            elif replay:
+                texts.append("In Replay Mode")
             else:
-                texts = [
-                    f"It's Player {1 if game_functions.get_player_turn() == 1 else 2}'s turn!",
-                    f"It's time to move pieces! Select a piece to move then select the position you want to move to."
-                ]
-    if game_mode_selection == True:
-        texts = [
-            f"Select Game Mode"
-        ]
-
+                texts.append(f"It's Player {1 if game_functions.get_player_turn() == 1 else 2}'s turn!")
+                texts.append("It's time to move pieces! Select a piece to move then select the position you want to move to.")
+    elif game_mode_selection:
+        texts.append("Select Game Mode")
 
     for i, text in enumerate(texts):
         textsurface = myfont.render(text, False, (0, 0, 0))
-        screen.blit(textsurface, (10, 600 + i*30))
+        screen.blit(textsurface, (10, 600 + i * 30))
 
-###### replay with GUI ######
 def set_replay(idx):
     print("replay function called")
     if not os.path.exists(board.TEMP_LOG_PATH):
@@ -380,10 +336,10 @@ def set_replay(idx):
         'remaining_turns': board.get_remaining_turns(),
         'permissible_moves': board.get_permissible_moves(),
     }
-    currentstuff = [log,current_state]
+    currentstuff = [log, current_state]
     return currentstuff
 
-def replay_handler(replay_option,log,replay_state,current_state):
+def replay_handler(replay_option, log, replay_state, current_state):
     print("replay_option: ", replay_option)
     print("replay_state: ", replay_state)
     print("current_state: ", current_state)
@@ -391,43 +347,23 @@ def replay_handler(replay_option,log,replay_state,current_state):
     if log is None or current_state is None:
         print("Error: Log or current state is None")
         return
-    if replay_option == 0: # rewind a move button
-        if index != 0:
-            index -= 1
-            replay_state = index
-        else:
-            index = 0
-            replay_state = index
-        state = log[index]
-        board.set_positions(state['positions'])
-        board.set_player_turn(state['player_turn'])
-        board.set_active_mills(state['active_mills'])
-        board.set_remaining_turns(state['remaining_turns'])
-        return replay_state
 
-    if replay_option == 2:
-        if index != (len(log)-1): # fast forward button
-            index += 1
-            replay_state = index
-        else:
-            index = 0
-            replay_state = index
-        print("log length: ", len(log))
-        print("index: ", index)
-        state = log[index]
-        board.set_positions(state['positions'])
-        board.set_player_turn(state['player_turn'])
-        board.set_active_mills(state['active_mills'])
-        board.set_remaining_turns(state['remaining_turns'])
-        return replay_state
-    
-    if replay_option == 3: # exit replay button
-        #reset current state
+    if replay_option == 0:  # rewind a move button
+        index = max(0, index - 1)
+        replay_state = index
+    elif replay_option == 2:  # fast forward button
+        index = min(len(log) - 1, index + 1)
+        replay_state = index
+    elif replay_option == 3:  # exit replay button
+        replay_state = 0
         current_state = current_state
-        board.set_positions(current_state['positions'])
-        board.set_player_turn(current_state['player_turn'])
-        board.set_active_mills(current_state['active_mills'])
-        board.set_remaining_turns(current_state['remaining_turns'])
+
+    state = log[index]
+    board.set_positions(state['positions'])
+    board.set_player_turn(state['player_turn'])
+    board.set_active_mills(state['active_mills'])
+    board.set_remaining_turns(state['remaining_turns'])
+    return replay_state
 
 def game_loop(variable_load, computer):
 
